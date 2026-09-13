@@ -1,0 +1,20 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Run Bank Web Server (Browser Mode)",
+            "request": "launch",
+            "mainClass": "com.bank.BankWebServer",
+            "projectName": "simple-bank-account"
+        },
+        {
+            "type": "java",
+            "name": "Run Bank App (Console Terminal Mode)",
+            "request": "launch",
+            "mainClass": "com.bank.BankApp",
+            "projectName": "simple-bank-account",
+            "console": "integratedTerminal"
+        }
+    ]
+}
