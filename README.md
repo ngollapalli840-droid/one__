@@ -1,65 +1,88 @@
 # SimpleBankAccount
 
 ## Description
-SimpleBankAccount is a beginner-friendly banking application built in Java using Apache Maven. It simulates core banking operations including account creation, money deposit, money withdrawal (with overdraft protection), and balance inquiry.
+SimpleBankAccount is a beginner-friendly banking web application built in Java 17 using Apache Maven. It packages into a deployable `.war` file suitable for **Jenkins CI/CD** and **Apache Tomcat** (or standalone local execution).
 
-It supports two modes:
-1. **Interactive Console Mode** (Terminal / Command Prompt)
-2. **Modern Web Browser Dashboard** (Runs locally on `http://localhost:8080` using standard Java 17, zero external dependencies!)
+It simulates core banking operations including account creation, money deposit, money withdrawal (with overdraft protection), balance inquiry, and real-time transaction tracking.
+
+## Deployment & Execution Modes
+1. **Jenkins & Apache Tomcat Deployment (WAR File)**:
+   - Packages as `target/simple-bank-account.war`.
+   - Ready for automated Jenkins CI/CD deployment to Tomcat's `webapps` directory.
+   - Accessible via browser at `http://<tomcat-server>:8080/simple-bank-account/`.
+2. **Local Standalone Web Server**:
+   - Runs directly on `http://localhost:8080/` without needing an external servlet container.
+3. **Interactive Console Mode (Terminal / CLI)**:
+   - Command-line application using `java.util.Scanner`.
 
 ## Features
-- **Account Creation**: Prompts or accepts account number and account holder name.
-- **Deposit**: Adds funds to the account with positive amount validation.
-- **Withdrawal**: Deducts funds with strict overdraft protection preventing withdrawal when funds are insufficient.
-- **Check Balance**: Instant display of account details and updated balance.
-- **Web Dashboard**: Modern, responsive UI accessible via any browser with live transaction history and instant feedback.
-- **Zero External Dependencies**: Pure standard Java 17 (`java.util.Scanner` and `com.sun.net.httpserver.HttpServer`).
+- **Account Creation**: Set up account with account number, holder name, and optional initial deposit.
+- **Deposit**: Adds funds to the account with positive number validation.
+- **Withdrawal**: Overdraft guard preventing withdrawals when balance is insufficient.
+- **Check Balance**: Real-time display of current balance and account holder information.
+- **Transaction History**: Real-time transaction log.
+- **RESTful Endpoints & Jakarta Servlet**: Handles `/api/account`, `/api/create`, `/api/deposit`, `/api/withdraw`, `/api/reset`.
 
 ## Technologies
 - **Java**: Java 17
+- **Packaging**: WAR (`<packaging>war</packaging>`)
 - **Build Tool**: Apache Maven
-- **Web Server**: Built-in Java `HttpServer`
-- **Frontend**: Responsive HTML5, CSS3, and JavaScript
+- **Servlet Specification**: Jakarta Servlet API 6.0 (`jakarta.servlet-api`)
+- **Frontend**: HTML5, CSS3, JavaScript
 
 ## Project Structure
 ```text
-SimpleBankAccount/
 ├── pom.xml
 ├── README.md
+├── .gitignore
+├── .vscode/
+│   ├── launch.json
+│   └── tasks.json
 └── src/
     ├── main/
-    │   └── java/
-    │       └── com/
-    │           └── bank/
-    │               ├── BankAccount.java
-    │               ├── BankApp.java
-    │               └── BankWebServer.java
+    │   ├── java/
+    │   │   └── com/
+    │   │       └── bank/
+    │   │           ├── BankAccount.java
+    │   │           ├── BankApp.java
+    │   │           ├── BankServlet.java
+    │   │           └── BankWebServer.java
+    │   └── webapp/
+    │       ├── index.html
+    │       └── WEB-INF/
+    │           └── web.xml
     └── test/
         └── java/
 ```
 
-## How to Build
-Navigate to the project root directory (`SimpleBankAccount`) and run:
+## How to Build (Jenkins / Maven)
+Run Maven in the repository root directory:
 ```bash
 mvn clean package
 ```
-
-## How to Run
-
-### Option A: Web Browser Dashboard (Recommended)
-Run the web server:
-```bash
-java -cp target\classes com.bank.BankWebServer
+This compiles the code and generates:
+```text
+target/simple-bank-account.war
 ```
-Then open your browser and visit:
-[http://localhost:8080](http://localhost:8080)
 
-### Option B: Interactive Console (Terminal)
-Run the console application:
+## How to Deploy & Run
+
+### 1. Deploy on Apache Tomcat via Jenkins
+- In your Jenkins job configuration, add a post-build step **"Deploy war/ear to a container"** (or use `scp`/`cp` in pipeline script).
+- Point to: `target/simple-bank-account.war`
+- Context path: `simple-bank-account` (or `/` for root).
+- Access in your browser:
+  ```text
+  http://<server-ip>:8080/simple-bank-account/
+  ```
+
+### 2. Standalone Web Server (Local testing without Tomcat)
 ```bash
-java -cp target\classes com.bank.BankApp
+java -cp target/classes com.bank.BankWebServer
 ```
-Or directly run the generated JAR:
+Open [http://localhost:8080](http://localhost:8080) in your browser.
+
+### 3. Interactive Console (Terminal)
 ```bash
-java -cp target/simple-bank-account-1.0.jar com.bank.BankApp
+java -cp target/classes com.bank.BankApp
 ```
